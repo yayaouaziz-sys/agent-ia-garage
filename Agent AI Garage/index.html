@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Agent IA Garage</title>
+    <link rel="icon" type="image/png" href="assets/logo-header.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            height: calc(var(--vh, 1vh) * 90);
+            max-height: 700px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* === HEADER === */
+        .chat-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .chat-header img {
+            width: 100%;
+            height: 65px;
+            object-fit: cover;
+        }
+
+        /* === ZONE MESSAGES === */
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f5f5f5;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            display: flex;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            white-space: pre-line;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #1a5276 0%, #2471a3 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* === ECRAN D'ACCUEIL === */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .welcome-screen img {
+            width: 100%;
+            max-width: 420px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin: 10px 0 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+        }
+
+        .welcome-screen h2 {
+            color: #1a1a2e;
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        .welcome-screen p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            max-width: 300px;
+            font-size: 14px;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #c9a227 0%, #d4ac2b 50%, #e0b830 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 16px 50px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.4);
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(201, 162, 39, 0.6), 0 0 15px rgba(212, 172, 43, 0.4);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.4);
+        }
+
+        /* === ZONE INPUT === */
+        .chat-input-container {
+            padding: 12px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .chat-input-container.active {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+            -webkit-appearance: none;
+        }
+
+        .chat-input:focus {
+            border-color: #c9a227;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #c9a227 0%, #d4ac2b 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+        }
+
+        .btn-send:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* === LOADING === */
+        .loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #1a5276;
+            animation: pulse 1.4s infinite ease-in-out;
+            margin: 0 2px;
+        }
+
+        .loading:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 80%, 100% {
+                transform: scale(0.6);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* === ERREUR === */
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            padding: 10px;
+            background: #fef5f5;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        /* ============================================
+           RESPONSIVE - MOBILE
+           ============================================ */
+
+        /* Petits telephones */
+        @media screen and (max-width: 380px) {
+            body {
+                padding: 5px;
+            }
+
+            .chat-container {
+                height: 95vh;
+                height: calc(var(--vh, 1vh) * 95);
+                border-radius: 15px;
+            }
+
+            .chat-header img {
+                height: 45px;
+            }
+
+            .welcome-screen img {
+                width: 100%;
+                height: 140px;
+            }
+
+            .welcome-screen h2 {
+                font-size: 20px;
+            }
+
+            .welcome-screen p {
+                font-size: 13px;
+            }
+
+            .btn-start {
+                padding: 12px 30px;
+                font-size: 14px;
+            }
+
+            .message-content {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+            .chat-input {
+                padding: 10px 14px;
+                font-size: 16px;
+            }
+
+            .btn-send {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+        }
+
+        /* Telephones standards */
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .chat-container {
+                height: 100vh;
+                height: calc(var(--vh, 1vh) * 100);
+                max-height: none;
+                border-radius: 0;
+            }
+
+            .chat-header {
+                padding: 12px 15px;
+            }
+
+            .chat-messages {
+                padding: 12px;
+            }
+
+            .chat-input-container {
+                padding: 10px;
+                padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Tablettes */
+        @media screen and (min-width: 481px) and (max-width: 768px) {
+            .chat-container {
+                max-width: 450px;
+                height: 85vh;
+            }
+        }
+
+        /* Desktop */
+        @media screen and (min-width: 769px) {
+            .chat-container {
+                max-width: 500px;
+                height: 650px;
+            }
+
+            .welcome-screen img {
+                width: 100%;
+                height: 200px;
+            }
+
+            .message-content {
+                font-size: 15px;
+            }
+        }
+
+        /* Mode paysage telephone */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .chat-container {
+                height: 95vh;
+                max-height: none;
+            }
+
+            .welcome-screen img {
+                width: 100%;
+                height: 80px;
+                margin-bottom: 10px;
+            }
+
+            .welcome-screen h2 {
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+
+            .welcome-screen p {
+                font-size: 12px;
+                margin-bottom: 15px;
+            }
+
+            .btn-start {
+                padding: 10px 25px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="assets/logo-center.png" alt="Agent IA Garage">
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-screen" id="welcomeScreen">
+                <img src="assets/favicon.png" alt="Agent IA Garage">
+                <h2>Bienvenue !</h2>
+                <p>Je suis votre assistant virtuel. Je vais vous aider a prendre rendez-vous rapidement et facilement.</p>
+                <button class="btn-start" onclick="startChat()">
+                    Demarrer la conversation
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-input-container" id="chatInputContainer">
+            <input
+                type="text"
+                class="chat-input"
+                id="messageInput"
+                placeholder="Tapez votre message..."
+                onkeypress="handleKeyPress(event)"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+            >
+            <button class="btn-send" onclick="sendMessage()" id="sendButton">
+                Envoyer
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Fix hauteur viewport mobile (barre d'adresse)
+        function setVH() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(setVH, 100);
+        });
+
+        // Configuration
+        const WEBHOOK_URL = 'https://n8n.srv1260361.hstgr.cloud/webhook/garage-agent';
+
+        // Etat
+        let sessionId = null;
+        let sessionState = {};
+        let isWaitingResponse = false;
+
+        // Generer un ID de session unique
+        function generateSessionId() {
+            return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        // Demarrer la conversation
+        async function startChat() {
+            sessionId = generateSessionId();
+            sessionState = {};
+
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('chatInputContainer').classList.add('active');
+
+            await sendToBot('bonjour');
+
+            document.getElementById('messageInput').focus();
+        }
+
+        // Ajouter un message dans le chat
+        function addMessage(text, isUser = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Afficher l'indicateur de chargement
+        function showLoading() {
+            const messagesContainer = document.getElementById('chatMessages');
+
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message bot';
+            loadingDiv.id = 'loadingIndicator';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = '<span class="loading"></span><span class="loading"></span><span class="loading"></span>';
+
+            loadingDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(loadingDiv);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Cacher l'indicateur de chargement
+        function hideLoading() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
+        }
+
+        // Afficher une erreur
+        function showError(message) {
+            const messagesContainer = document.getElementById('chatMessages');
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+
+            messagesContainer.appendChild(errorDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Envoyer un message au bot
+        async function sendToBot(message) {
+            if (isWaitingResponse) return;
+
+            isWaitingResponse = true;
+            document.getElementById('sendButton').disabled = true;
+
+            try {
+                showLoading();
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId,
+                        session_state: sessionState,
+                        garage_id: 'GARAGE_001'
+                    })
+                });
+
+                hideLoading();
+
+                if (!response.ok) {
+                    throw new Error(`Erreur serveur: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                }
+                if (data.session_state) {
+                    sessionState = data.session_state;
+                }
+
+                if (data.message) {
+                    addMessage(data.message, false);
+                }
+
+                if (data.is_complete) {
+                    setTimeout(() => {
+                        addMessage("Le garage va vous recontacter rapidement !", false);
+                        document.getElementById('messageInput').disabled = true;
+                        document.getElementById('sendButton').disabled = true;
+                    }, 500);
+                }
+
+            } catch (error) {
+                hideLoading();
+                showError(`Erreur: ${error.message}`);
+            } finally {
+                isWaitingResponse = false;
+                if (!document.getElementById('messageInput').disabled) {
+                    document.getElementById('sendButton').disabled = false;
+                }
+            }
+        }
+
+        // Envoyer un message utilisateur
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message || isWaitingResponse) return;
+
+            addMessage(message, true);
+            input.value = '';
+
+            await sendToBot(message);
+        }
+
+        // Gerer la touche Entree
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
