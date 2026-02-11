@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
     <title>Agent IA Garage</title>
-    <link rel="icon" type="assets/logo-header.png" href="assets/logo-header.png">
+    <link rel="icon" type="image/png" href="assets/logo-header.png">
+    <link rel="apple-touch-icon" href="assets/logo-header.png">
+    <link rel="manifest" href="manifest.json">
     <style>
         * {
             margin: 0;
@@ -28,6 +33,231 @@
             padding: 10px;
         }
 
+        /* ============================================
+           PAGE D'ACCUEIL / TUTO
+           ============================================ */
+        .landing-page {
+            width: 100%;
+            max-width: 500px;
+            max-height: 95vh;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .landing-page.hidden {
+            display: none;
+        }
+
+        .landing-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        .landing-header img {
+            width: 100%;
+            height: 85px;
+            object-fit: cover;
+        }
+
+        .landing-body {
+            padding: 25px 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .landing-hero {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .landing-hero img {
+            width: 100%;
+            max-width: 420px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+            margin-bottom: 18px;
+        }
+
+        .landing-hero h1 {
+            color: #1a1a2e;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .landing-hero p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Tuto section */
+        .tuto-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tuto-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .tuto-title .icon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2c3e6b 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            color: white;
+            box-shadow: 0 3px 10px rgba(26, 26, 46, 0.3);
+        }
+
+        .tuto-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tuto-tab {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            color: #666;
+        }
+
+        .tuto-tab.active {
+            border-color: #c9a227;
+            background: #fef9e7;
+            color: #1a1a2e;
+        }
+
+        .tuto-steps {
+            display: none;
+        }
+
+        .tuto-steps.active {
+            display: block;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #1a1a2e, #2c3e6b);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 13px;
+            color: #444;
+            line-height: 1.5;
+            padding-top: 3px;
+        }
+
+        .step-text strong {
+            color: #1a1a2e;
+        }
+
+        .step-text .key {
+            display: inline-block;
+            background: #1a1a2e;
+            color: white;
+            padding: 1px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Bouton principal */
+        .landing-cta {
+            text-align: center;
+            padding-bottom: 5px;
+        }
+
+        .btn-go-chat {
+            background: linear-gradient(135deg, #c9a227 0%, #d4ac2b 50%, #e0b830 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 16px 50px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.4);
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.5px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .btn-go-chat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(201, 162, 39, 0.6), 0 0 15px rgba(212, 172, 43, 0.4);
+        }
+
+        .btn-go-chat:active {
+            transform: translateY(0);
+        }
+
+        .skip-tuto {
+            display: block;
+            margin-top: 12px;
+            color: #999;
+            font-size: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .skip-tuto:hover {
+            color: #666;
+        }
+
+        /* ============================================
+           CHATBOT
+           ============================================ */
         .chat-container {
             width: 100%;
             max-width: 500px;
@@ -37,12 +267,15 @@
             background: #fff;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            display: flex;
+            display: none;
             flex-direction: column;
             overflow: hidden;
         }
 
-        /* === HEADER === */
+        .chat-container.active {
+            display: flex;
+        }
+
         .chat-header {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
@@ -57,11 +290,10 @@
 
         .chat-header img {
             width: 100%;
-            height: 65px;
+            height: 85px;
             object-fit: cover;
         }
 
-        /* === ZONE MESSAGES === */
         .chat-messages {
             flex: 1;
             padding: 15px;
@@ -77,23 +309,12 @@
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .message.bot {
-            justify-content: flex-start;
-        }
-
-        .message.user {
-            justify-content: flex-end;
-        }
+        .message.bot { justify-content: flex-start; }
+        .message.user { justify-content: flex-end; }
 
         .message-content {
             max-width: 80%;
@@ -118,78 +339,13 @@
             border-bottom-right-radius: 4px;
         }
 
-        /* === ECRAN D'ACCUEIL === */
-        .welcome-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .welcome-screen img {
-            width: 100%;
-            max-width: 420px;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 14px;
-            margin: 10px 0 18px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.18);
-        }
-
-        .welcome-screen h2 {
-            color: #1a1a2e;
-            margin-bottom: 12px;
-            font-size: 22px;
-        }
-
-        .welcome-screen p {
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.5;
-            max-width: 300px;
-            font-size: 14px;
-        }
-
-        .btn-start {
-            background: linear-gradient(135deg, #c9a227 0%, #d4ac2b 50%, #e0b830 100%);
-            color: #1a1a2e;
-            border: none;
-            padding: 16px 50px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.3s;
-            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.4);
-            -webkit-tap-highlight-color: transparent;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-start:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(201, 162, 39, 0.6), 0 0 15px rgba(212, 172, 43, 0.4);
-        }
-
-        .btn-start:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.4);
-        }
-
-        /* === ZONE INPUT === */
         .chat-input-container {
             padding: 12px;
             background: white;
             border-top: 1px solid #e0e0e0;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .chat-input-container.active {
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .chat-input {
@@ -221,17 +377,9 @@
             white-space: nowrap;
         }
 
-        .btn-send:hover {
-            transform: scale(1.05);
-        }
+        .btn-send:hover { transform: scale(1.05); }
+        .btn-send:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        .btn-send:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* === LOADING === */
         .loading {
             display: inline-block;
             width: 8px;
@@ -241,27 +389,14 @@
             animation: pulse 1.4s infinite ease-in-out;
             margin: 0 2px;
         }
-
-        .loading:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .loading:nth-child(3) {
-            animation-delay: 0.4s;
-        }
+        .loading:nth-child(2) { animation-delay: 0.2s; }
+        .loading:nth-child(3) { animation-delay: 0.4s; }
 
         @keyframes pulse {
-            0%, 80%, 100% {
-                transform: scale(0.6);
-                opacity: 0.5;
-            }
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
         }
 
-        /* === ERREUR === */
         .error-message {
             color: #e74c3c;
             font-size: 12px;
@@ -273,159 +408,155 @@
         }
 
         /* ============================================
-           RESPONSIVE - MOBILE
+           RESPONSIVE
            ============================================ */
-
-        /* Petits telephones */
         @media screen and (max-width: 380px) {
-            body {
-                padding: 5px;
-            }
-
-            .chat-container {
-                height: 95vh;
-                height: calc(var(--vh, 1vh) * 95);
-                border-radius: 15px;
-            }
-
-            .chat-header img {
-                height: 45px;
-            }
-
-            .welcome-screen img {
-                width: 100%;
-                height: 140px;
-            }
-
-            .welcome-screen h2 {
-                font-size: 20px;
-            }
-
-            .welcome-screen p {
-                font-size: 13px;
-            }
-
-            .btn-start {
-                padding: 12px 30px;
-                font-size: 14px;
-            }
-
-            .message-content {
-                font-size: 13px;
-                padding: 8px 12px;
-            }
-
-            .chat-input {
-                padding: 10px 14px;
-                font-size: 16px;
-            }
-
-            .btn-send {
-                padding: 10px 15px;
-                font-size: 13px;
-            }
+            body { padding: 5px; }
+            .landing-hero h1 { font-size: 20px; }
+            .landing-hero img { height: 120px; }
+            .tuto-section { padding: 15px; }
+            .step-text { font-size: 12px; }
+            .btn-go-chat { padding: 14px 30px; font-size: 14px; }
+            .chat-header img { height: 45px; }
+            .message-content { font-size: 13px; padding: 8px 12px; }
         }
 
-        /* Telephones standards */
         @media screen and (max-width: 480px) {
-            body {
-                padding: 0;
+            body { padding: 0; }
+
+            .landing-page {
+                max-height: 100vh;
+                border-radius: 0;
             }
 
-            .chat-container {
+            .chat-container.active {
                 height: 100vh;
                 height: calc(var(--vh, 1vh) * 100);
                 max-height: none;
                 border-radius: 0;
             }
 
-            .chat-header {
-                padding: 12px 15px;
-            }
-
-            .chat-messages {
-                padding: 12px;
-            }
-
+            .chat-header { padding: 0; }
+            .chat-messages { padding: 12px; }
             .chat-input-container {
                 padding: 10px;
                 padding-bottom: calc(10px + env(safe-area-inset-bottom));
             }
         }
 
-        /* Tablettes */
         @media screen and (min-width: 481px) and (max-width: 768px) {
-            .chat-container {
-                max-width: 450px;
-                height: 85vh;
-            }
+            .landing-page { max-width: 450px; }
+            .chat-container.active { max-width: 450px; height: 85vh; }
         }
 
-        /* Desktop */
         @media screen and (min-width: 769px) {
-            .chat-container {
-                max-width: 500px;
-                height: 650px;
-            }
-
-            .welcome-screen img {
-                width: 100%;
-                height: 200px;
-            }
-
-            .message-content {
-                font-size: 15px;
-            }
+            .chat-container.active { max-width: 500px; height: 650px; }
+            .landing-hero img { height: 180px; }
+            .message-content { font-size: 15px; }
         }
 
-        /* Mode paysage telephone */
         @media screen and (max-height: 500px) and (orientation: landscape) {
-            .chat-container {
-                height: 95vh;
-                max-height: none;
-            }
-
-            .welcome-screen img {
-                width: 100%;
-                height: 80px;
-                margin-bottom: 10px;
-            }
-
-            .welcome-screen h2 {
-                font-size: 18px;
-                margin-bottom: 8px;
-            }
-
-            .welcome-screen p {
-                font-size: 12px;
-                margin-bottom: 15px;
-            }
-
-            .btn-start {
-                padding: 10px 25px;
-                font-size: 13px;
-            }
+            .landing-hero img { height: 80px; }
+            .tuto-section { padding: 12px; }
+            .chat-container.active { height: 95vh; max-height: none; }
         }
+
+        /* Animation d'entree */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .landing-body > * {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        .landing-hero { animation-delay: 0.1s; }
+        .tuto-section { animation-delay: 0.3s; }
+        .landing-cta { animation-delay: 0.5s; }
     </style>
 </head>
 <body>
-    <div class="chat-container">
+
+    <!-- ========== PAGE D'ACCUEIL + TUTO ========== -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-header">
+            <img src="assets/logo-center.png" alt="Agent IA Garage">
+        </div>
+
+        <div class="landing-body">
+            <!-- Hero -->
+            <div class="landing-hero">
+                <img src="assets/favicon.png" alt="Garage">
+                <h1>Bienvenue !</h1>
+                <p>Prenez rendez-vous avec votre garagiste en quelques messages, 24h/24.</p>
+            </div>
+
+            <!-- Tuto installation -->
+            <div class="tuto-section">
+                <div class="tuto-title">
+                    <div class="icon">&#9889;</div>
+                    Installez l'appli en 10 secondes
+                </div>
+
+                <!-- Tabs iPhone / Android -->
+                <div class="tuto-tabs">
+                    <div class="tuto-tab active" onclick="switchTuto('iphone')">iPhone</div>
+                    <div class="tuto-tab" onclick="switchTuto('android')">Android</div>
+                </div>
+
+                <!-- Steps iPhone -->
+                <div class="tuto-steps active" id="tuto-iphone">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Appuyez sur le bouton <strong>Partager</strong> en bas de Safari (icone carre avec fleche vers le haut)</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Faites defiler et appuyez sur <span class="key">Sur l'ecran d'accueil</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Appuyez sur <strong>Ajouter</strong> en haut a droite. C'est fait !</div>
+                    </div>
+                </div>
+
+                <!-- Steps Android -->
+                <div class="tuto-steps" id="tuto-android">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Appuyez sur les <strong>3 points</strong> en haut a droite de Chrome</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Appuyez sur <span class="key">Ajouter a l'ecran d'accueil</span></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Confirmez en appuyant sur <strong>Ajouter</strong>. C'est fait !</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="landing-cta">
+                <button class="btn-go-chat" onclick="goToChat()">
+                    Prendre rendez-vous
+                </button>
+                <span class="skip-tuto" onclick="goToChat()">Deja installe ? Demarrer directement</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== CHATBOT ========== -->
+    <div class="chat-container" id="chatContainer">
         <div class="chat-header">
             <img src="assets/logo-center.png" alt="Agent IA Garage">
         </div>
 
-        <div class="chat-messages" id="chatMessages">
-            <div class="welcome-screen" id="welcomeScreen">
-                <img src="assets/favicon.png" alt="Agent IA Garage">
-                <h2>Bienvenue !</h2>
-                <p>Je suis votre assistant virtuel. Je vais vous aider a prendre rendez-vous rapidement et facilement.</p>
-                <button class="btn-start" onclick="startChat()">
-                    Demarrer la conversation
-                </button>
-            </div>
-        </div>
+        <div class="chat-messages" id="chatMessages"></div>
 
-        <div class="chat-input-container" id="chatInputContainer">
+        <div class="chat-input-container">
             <input
                 type="text"
                 class="chat-input"
@@ -443,113 +574,102 @@
     </div>
 
     <script>
-        // Fix hauteur viewport mobile (barre d'adresse)
+        // Fix hauteur viewport mobile
         function setVH() {
             let vh = window.innerHeight * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
         }
         setVH();
         window.addEventListener('resize', setVH);
-        window.addEventListener('orientationchange', () => {
-            setTimeout(setVH, 100);
-        });
+        window.addEventListener('orientationchange', () => setTimeout(setVH, 100));
 
-        // Configuration
+        // === TUTO TABS ===
+        function switchTuto(tab) {
+            document.querySelectorAll('.tuto-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tuto-steps').forEach(s => s.classList.remove('active'));
+
+            if (tab === 'iphone') {
+                document.querySelectorAll('.tuto-tab')[0].classList.add('active');
+                document.getElementById('tuto-iphone').classList.add('active');
+            } else {
+                document.querySelectorAll('.tuto-tab')[1].classList.add('active');
+                document.getElementById('tuto-android').classList.add('active');
+            }
+        }
+
+        // === NAVIGATION LANDING -> CHAT ===
+        function goToChat() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('chatContainer').classList.add('active');
+            startChat();
+        }
+
+        // === CHATBOT ===
         const WEBHOOK_URL = 'https://n8n.srv1260361.hstgr.cloud/webhook/garage-agent';
-
-        // Etat
         let sessionId = null;
         let sessionState = {};
         let isWaitingResponse = false;
 
-        // Generer un ID de session unique
         function generateSessionId() {
             return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         }
 
-        // Demarrer la conversation
         async function startChat() {
             sessionId = generateSessionId();
             sessionState = {};
-
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('chatInputContainer').classList.add('active');
-
             await sendToBot('bonjour');
-
             document.getElementById('messageInput').focus();
         }
 
-        // Ajouter un message dans le chat
         function addMessage(text, isUser = false) {
-            const messagesContainer = document.getElementById('chatMessages');
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-
+            const container = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
             contentDiv.textContent = text;
-
-            messageDiv.appendChild(contentDiv);
-            messagesContainer.appendChild(messageDiv);
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            msgDiv.appendChild(contentDiv);
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
         }
 
-        // Afficher l'indicateur de chargement
         function showLoading() {
-            const messagesContainer = document.getElementById('chatMessages');
-
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message bot';
-            loadingDiv.id = 'loadingIndicator';
-
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            contentDiv.innerHTML = '<span class="loading"></span><span class="loading"></span><span class="loading"></span>';
-
-            loadingDiv.appendChild(contentDiv);
-            messagesContainer.appendChild(loadingDiv);
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            div.id = 'loadingIndicator';
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = '<span class="loading"></span><span class="loading"></span><span class="loading"></span>';
+            div.appendChild(content);
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
         }
 
-        // Cacher l'indicateur de chargement
         function hideLoading() {
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            if (loadingIndicator) {
-                loadingIndicator.remove();
-            }
+            const el = document.getElementById('loadingIndicator');
+            if (el) el.remove();
         }
 
-        // Afficher une erreur
-        function showError(message) {
-            const messagesContainer = document.getElementById('chatMessages');
-
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = message;
-
-            messagesContainer.appendChild(errorDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        function showError(msg) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'error-message';
+            div.textContent = msg;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
         }
 
-        // Envoyer un message au bot
         async function sendToBot(message) {
             if (isWaitingResponse) return;
-
             isWaitingResponse = true;
             document.getElementById('sendButton').disabled = true;
 
             try {
                 showLoading();
-
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: message,
                         session_id: sessionId,
@@ -559,23 +679,12 @@
                 });
 
                 hideLoading();
-
-                if (!response.ok) {
-                    throw new Error(`Erreur serveur: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
 
                 const data = await response.json();
-
-                if (data.session_id) {
-                    sessionId = data.session_id;
-                }
-                if (data.session_state) {
-                    sessionState = data.session_state;
-                }
-
-                if (data.message) {
-                    addMessage(data.message, false);
-                }
+                if (data.session_id) sessionId = data.session_id;
+                if (data.session_state) sessionState = data.session_state;
+                if (data.message) addMessage(data.message, false);
 
                 if (data.is_complete) {
                     setTimeout(() => {
@@ -584,7 +693,6 @@
                         document.getElementById('sendButton').disabled = true;
                     }, 500);
                 }
-
             } catch (error) {
                 hideLoading();
                 showError(`Erreur: ${error.message}`);
@@ -596,26 +704,23 @@
             }
         }
 
-        // Envoyer un message utilisateur
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
-
             if (!message || isWaitingResponse) return;
-
             addMessage(message, true);
             input.value = '';
-
             await sendToBot(message);
         }
 
-        // Gerer la touche Entree
         function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
+            if (event.key === 'Enter') sendMessage();
+        }
+
+        // Si lance en mode PWA (standalone), aller direct au chat
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            goToChat();
         }
     </script>
 </body>
 </html>
-
